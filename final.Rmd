@@ -4,23 +4,49 @@ Group members: William Patsios, Edward Tong, Aditya Srinivasan
 Output type: html_document
 
 ---
-
-##Table of Contents
-I. Introduction
-II. Data
-III. Analysis
-  i. Statistical
-  ii. Visual
-IV. Conclusion
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
 ```{r}
 library(ggplot2)
 library(tidyverse)
+library(tidyr)
+library(dplyr)
+library(tibble)
+library(askpass)
+library(datasets)
+library(leaflet)
+library(lubridate)
+
 ```
 ####I. Introduction
 
 Hello! Welcome to the Data Science Tutorial! We will teach you how to work with R and how to work with datasets!
 ```{r}
-poop <- read_csv("data/COVID19_line_list_data.csv")
-poop
+data <- read_csv("COVID19_line_list_data.csv")
+data
+```
+
+
+Next, we select the columns that we are interested in. For our purposes, we only need `time`, `latitude`, `longitude`, `depth`, `mag`, `magType`, and `place`.
+```{r}
+simple_data <- data %>%
+  select("reporting date", "country", "gender", "age")
+simple_data
+```
+
+```{r}
+library(lubridate)
+simple_data <- simple_data %>%
+  mutate(date=mdy(simple_data$`reporting date`))%>%
+  select(-"reporting date")
+simple_data
+```
+
+```{r}
+ext_dat <- ext_dat %>%
+  mutate(time=as.Date(time))
+colnames(ext_dat)[colnames(ext_dat) == "time"] <- "date"
+ext_dat
 ```
