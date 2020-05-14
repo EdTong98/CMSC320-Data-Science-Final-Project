@@ -1,0 +1,9 @@
+```{r}
+library(ggplot2)
+library(tidyverse)
+```
+
+```{r}
+poop <- read_csv("data/COVID19_line_list_data.csv")
+poop
+```
