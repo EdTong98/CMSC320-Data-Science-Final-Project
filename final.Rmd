@@ -1,8 +1,25 @@
+---
+
+Group members: William Patsios, Edward Tong, Aditya Srinivasan
+Output type: html_document
+
+---
+
+##Table of Contents
+I. Introduction
+II. Data
+III. Analysis
+  i. Statistical
+  ii. Visual
+IV. Conclusion
+
 ```{r}
 library(ggplot2)
 library(tidyverse)
 ```
+####I. Introduction
 
+Hello! Welcome to the Data Science Tutorial! We will teach you how to work with R and how to work with datasets!
 ```{r}
 poop <- read_csv("data/COVID19_line_list_data.csv")
 poop
