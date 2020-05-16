@@ -8,7 +8,7 @@ Output type: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r message=FALSE}
 library(ggplot2)
 library(tidyverse)
 library(tidyr)
@@ -16,7 +16,6 @@ library(dplyr)
 library(tibble)
 library(askpass)
 library(datasets)
-library(leaflet)
 library(lubridate)
 
 ```
@@ -24,7 +23,7 @@ library(lubridate)
 
 Hello! Welcome to the Data Science Tutorial! We will teach you how to work with R and how to work with datasets!
 ```{r}
-data <- read_csv("COVID19_line_list_data.csv")
+data <- read_csv("data/COVID19_line_list_data.csv")
 data
 ```
 
@@ -44,9 +43,27 @@ simple_data <- simple_data %>%
 simple_data
 ```
 
+####Statistical Analysis
+
+Want to see if correlation between gender and number of cases
+
+
 ```{r}
-ext_dat <- ext_dat %>%
-  mutate(time=as.Date(time))
-colnames(ext_dat)[colnames(ext_dat) == "time"] <- "date"
-ext_dat
+
+```
+
+```{r}
+female_data <- simple_data %>%
+  filter(gender == "female") %>%
+  group_by(country, date) %>%
+  summarize(cases=n()) %>%
+  mutate(case_total=cumsum(cases))
+male_data <- simple_data %>%
+  filter(gender == "male") %>%
+  group_by(country, date) %>%
+  summarize(cases=n()) %>%
+  mutate(case_total=cumsum(cases))
+
+male_data %>% ggplot(aes(x=date, y=case_total, color=country)) + geom_line() + labs(title="Reported Male Cases") + ylim(0, 125)
+female_data %>% ggplot(aes(x=date, y=case_total, color=country)) + geom_line() + labs(title="Reported Female Cases") + ylim(0, 125)
 ```
