@@ -1,8 +1,6 @@
 ---
-
 Group members: William Patsios, Edward Tong, Aditya Srinivasan
 Output type: html_document
-
 ---
 ```{r setup, include=TRUE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -11,11 +9,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r message=FALSE}
 library(ggplot2)
 library(tidyverse)
-library(tidyr)
-library(dplyr)
-library(tibble)
-library(askpass)
-library(datasets)
 library(lubridate)
 
 ```
