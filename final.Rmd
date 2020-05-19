@@ -183,7 +183,7 @@ From this data set, we can see that the most vulnerable age group is 50-59 and  
 
 Part 4. Gender of people affected by coronavirus in China
 
-In this analysis, we want to see the number of people affected per gender in the origin location of the virus. Since the virus originated in China, we thought that it would be helpful to analyze how the virus affects people of different genders. Is the virus more effective towards males or females? To proceed with this , we will use the leaflet library to produce an interactive map. Documentation can be found in https://rstudio.github.io/leaflet/. We will mark these genders based on latitude and longitude. WE will circle the females in red and the male in grey.
+In this analysis, we want to see the number of people affected per gender in the origin location of the virus. Since the virus originated in China, we thought that it would be helpful to analyze how the virus affects people of different genders. Is the virus more effective towards males or females? To proceed with this , we will use the leaflet library to produce an interactive map. Documentation can be found in https://rstudio.github.io/leaflet/. We will mark these genders based on latitude and longitude. WE will circle the females in red and the male in blue.
 
 This code is using the leaflet package and loads a map of china.
 
@@ -303,3 +303,5 @@ In summary, through our tutorial, you have learned how to:
 -Analyized data and used different visualization techniques to learn about the coronavirus
 
 -Used linear regression to make predictions about COVID-19 cases in the future
+
+Dataset used: https://www.kaggle.com/sudalairajkumar/novel-corona-virus-2019-dataset 
