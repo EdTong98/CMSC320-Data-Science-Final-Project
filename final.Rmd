@@ -6,53 +6,76 @@ Output type: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r message=FALSE}
+####I. Introduction
+Hello! Welcome to the Data Science Tutorial! We will teach you how to work with R and how to work with datasets!
+
+```{r}
 library(ggplot2)
 library(tidyverse)
 library(lubridate)
-
-```
-####I. Introduction
-
-Hello! Welcome to the Data Science Tutorial! We will teach you how to work with R and how to work with datasets!
-```{r}
-data <- read_csv("data/COVID19_line_list_data.csv")
+data <- read_csv("data/final_covid_data.csv")
 data
 ```
 
-
 Next, we select the columns that we are interested in. For our purposes, we only need `time`, `latitude`, `longitude`, `depth`, `mag`, `magType`, and `place`.
+
+
 ```{r}
 simple_data <- data %>%
-  select("reporting date", "country", "gender", "age")
+  select("date_confirmation", "country", "sex", "age", "latitude", "longitude")
 simple_data
 ```
 
 ```{r}
-library(lubridate)
 simple_data <- simple_data %>%
-  mutate(date=mdy(simple_data$`reporting date`))%>%
-  select(-"reporting date")
+  mutate(date=dmy(`date_confirmation`))%>%
+  select(-"date_confirmation")
 simple_data
 ```
 
-####Statistical Analysis
+
+#2. Data Manipulation
+
+```{r}
+
+new_simple_data <- simple_data %>%  mutate(age = as.numeric(age))  %>%
+ replace_na(list(latitude=as.integer(mean(.$latitude, na.rm=TRUE)))) %>%
+  replace_na(list(longitude=as.integer(mean(.$longitude, na.rm=TRUE)))) %>%
+  replace_na(list(age=as.integer(mean(.$age, na.rm=TRUE))))
+
+new_simple_data
+ 
+```
+
+
+#3. Data Analysis and Visualization
+
+Part 1 : The top 10 countries with the highest number of corona cases. The way we can produce the output is to use a count function 
+```{r}
+
+```
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
 Want to see if correlation between gender and number of cases
 
-
-```{r}
-
-```
-
 ```{r}
 female_data <- simple_data %>%
-  filter(gender == "female") %>%
+  filter(sex == "female") %>%
   group_by(country, date) %>%
   summarize(cases=n()) %>%
   mutate(case_total=cumsum(cases))
 male_data <- simple_data %>%
-  filter(gender == "male") %>%
+  filter(sex == "male") %>%
   group_by(country, date) %>%
   summarize(cases=n()) %>%
   mutate(case_total=cumsum(cases))
@@ -60,3 +83,76 @@ male_data <- simple_data %>%
 male_data %>% ggplot(aes(x=date, y=case_total, color=country)) + geom_line() + labs(title="Reported Male Cases") + ylim(0, 125)
 female_data %>% ggplot(aes(x=date, y=case_total, color=country)) + geom_line() + labs(title="Reported Female Cases") + ylim(0, 125)
 ```
+
+## Regression
+
+Now that we have done analysis on the COVID-19 data, we want to see if we can use this data in order to make predictions about the future. Given the severity of the coronavirus pandemic, it is important to be able to forecast how many new infections we can expect in order to take the necessary precautions to the slow the spread of the virus.
+
+One way we can predict the new cases is to use a method called linear regression. Essentially, we use already collected data to create linear function that takes in a set of attributes related to coronavirus and spits out the predicted number of new cases.
+
+For our first linear model, we will try to see if we can predict the total number of global new cases of coronavirus. To do this, first we need to slightly restructure the data. The simple_data dataset has an attribute for each individual case, so we can total new cases for a given time if we group them by date reported.
+
+```{r}
+global_case_data <- simple_data %>%
+  group_by(date) %>%
+  summarize(new_cases=n())
+```
+
+Now that the data is in the proper format, we can create a simple linear regression model. 
+
+```{r warning=FALSE}
+global_case_data %>% ggplot(aes(x=date, y=new_cases)) + 
+  geom_point() +
+  geom_smooth(method=lm) +
+  labs(title="New COVID-19 Cases Globally ", x="Date", y="New Cases")
+```
+
+We can measure how useful this linear model is using hypothesis testing. If the p-value for an attribute is less than a threshold of 0.05, the null hypothesis is rejected. This also means that the the relationship between the attribute and the result is statistically significant.
+
+```{r}
+regression_model <- lm(new_cases~date, data=global_case_data)
+broom::tidy(regression_model)
+```
+
+Given the above results, the p-value is 0.007 so the relationship between date and the global COVID-19 cases is statistically signifcant.
+
+This method of predicting global coronavirus cases is useful, but what if we want to make more specific predictions? For instance, can we predict the number of new COVID-19 cases at a spcific time and location? Our linear regression model can be extended for to make predictions using more than one attribute.
+
+```{r}
+location_case_data <- simple_data %>%
+  group_by(country, date) %>%
+  summarize(new_cases=n())
+
+ry <- lm(new_cases~date+country, data=location_case_data)
+broom::tidy(ry)
+```
+
+This regression model takes into account the current date and the reported location of coronavirus cases. In many cases, the p-values for the case-location relationships are > 0.05 which means they are not statistically signifcant relations. The only location attribute that is within the p-value threshold is China. This indicates that we can only make statistically significant predictions about the number of expected coronavirus cases for the location: China. The likely reason that none of the other locations have statistically signicant relationships is a lack of collected data in this dataset. If other more case data was collected for other countries, it would be much easier to form accurate predictions for those locations.
+
+Another attribute that may be of interest to measure with linear regression is age. This would allow us to predict the number of new cases over time amoung different age groups.
+
+```{r}
+age_case_data <- simple_data %>%
+  group_by(date, age) %>%
+  summarize(new_cases=n())
+
+ry <- lm(new_cases~date+age, data=age_case_data)
+broom::tidy(ry)
+```
+
+For this model, the p-values for both date and age are < 0.05 so they both are statistically significant attributes.
+
+Ideally, for the most accurate predictions, we would create a linear regression model that takes all of these attributes into account.
+
+```{r}
+age_loc_case_data <- simple_data %>%
+  group_by(country, date, age) %>%
+  summarize(new_cases=n())
+
+ry <- lm(new_cases~date+country+age, data=age_loc_case_data)
+broom::tidy(ry)
+```
+
+Unfortunately, this causes the p-values for all attributes other than "date" to be greater than the 0.05 threshold. So this regression model is not statistically signifcant.
+
+For these linear regression models, we can get pretty good results when predicting new global COVID-19 cases. However, in order to get better predictions using more attributes, we would need to collect more data.
