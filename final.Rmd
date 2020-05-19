@@ -2,9 +2,9 @@
 Group members: William Patsios, Edward Tong, Aditya Srinivasan
 Output type: html_document
 ---
-######Tutorial for Data Science
+## Tutorial for Data Science
 
-###Table of Contents
+### Table of Contents
 
 I. Introduction
 
@@ -20,7 +20,7 @@ IV. Regression
 
 V. Conclusion
 
-##I. Introduction
+## I. Introduction
 
   Hello! Welcome to the Data Science Tutorial! We will teach you how to work with R and how to work with data sets! The data set we are working with is coronavirus cases around the world, as this is the most current problem we have to face. As a result, understanding the data gathered from cases around the globe can slow down and possibly prevent the spread of this virus. 
 
@@ -50,7 +50,7 @@ data <- read_csv("data/final_covid_data.csv")
 data
 ```
 
-  This variable called "simple_data" is our original data set with one modification. There are a large number of columns, many of which have empty values or are irrelevant in gathering useful data, so we want to keep all the relevant columns. In this case, we are saving the rows for dates reported for coronavirus, the country that reported the case, the gender of the person with the virus, their age, and the geographical coorinates of their location when the virus was discovered in them. This cleans up our data set as we have only what we need. 
+  This variable called "simple_data" is our original data set with one modification. There are a large number of columns, many of which have empty values or are irrelevant in gathering useful data, so we want to keep all the relevant columns. In this case, we are saving the rows for dates reported for coronavirus, the country that reported the case, the gender of the person with the virus, their age, and the geographical coordinates of their location when the virus was discovered in them. This cleans up our data set as we have only what we need. 
 ```{r}
 simple_data <- data %>%
   select("date_confirmation", "country", "sex", "age", "latitude", "longitude")
@@ -67,11 +67,9 @@ simple_data <- simple_data %>%
 simple_data
 ```
 
-##2. Data Manipulation
+## 2. Data Manipulation
 
   Next, we need to fix what we are given in the tables. Some rows have empty attributes in such cases where the age or gender of a person is not given (represented by "NA"). In this case, we will take the average of the age in a country, and fill in that age for NA. We will apply the same principle for the gender to make the data more accurate. The mutate statement converts the type of a column to a number. The value passed in is a word, so we need to make the column type into a number to perform operations on said column. By converting age, latitude, and longitude into numbers, we can take the average of them to gather an accurate age and location of where the person was when they were found positive with COVID-19.
-  
-  What we also do is remove the columns whose null attributes give us no context we can make inferences on. In this case: Gender and Country. There is no quantitive data one can make based on those categorical values, so randomly assigning them would give incorrect data. Therefore, we must remove those rows as they cannoy give us real data to work with.
 
 ```{r}
 new_simple_data <- simple_data %>%  mutate(age = as.numeric(age))  %>%
@@ -81,7 +79,7 @@ new_simple_data <- simple_data %>%  mutate(age = as.numeric(age))  %>%
 new_simple_data
 ```
 
-#3. Data Analysis and Visualization
+## 3. Data Analysis and Visualization
 
 Part 1 : The top 10 countries with the highest number of corona cases. The way we can produce the output is to use a count function 
 ```{r}
@@ -97,7 +95,7 @@ head(simple_data3, n = 10)
 
 From this data, we can see that China has the most corona cases . Although currently, the USA leads in corona cases, this is reflective of the dataset which we used.
 
-Now we will use a bar graph to visuzlie the relationship between a continuous variable (number of cases) to a categorical attribute such as a country. To do the plotting, we use ggplot.
+Now we will use a bar graph to visualize the relationship between a continuous variable (number of cases) to a categorical attribute such as a country. To do the plotting, we use ggplot.
 
 ```{r}
 simple_data2 %>%
@@ -106,9 +104,9 @@ simple_data2 %>%
     geom_bar(stat="identity") + theme(axis.text.x =   element_text(angle = 90))
 ```
 
-Part 2 : Progression of Corona over time from late January to late Feburary. 
+Part 2 : Progression of Corona over time from late January to late February. 
 
-We will see the progresssion of the corona virus pandemic in these countries every day and over time. First we need to filter the data set so it only contains the 3 countires that we need to analyze. Since this virus spreads really fast, we will use the greatest number of attacks on one specific day. Since a month is a short time, we have to focus on days to really see the impact of corona.
+We will see the progression of the corona virus pandemic in these countries every day and over time. First we need to filter the data set so it only contains the 3 countries that we need to analyze. Since this virus spreads really fast, we will use the greatest number of attacks on one specific day. Since a month is a short time, we have to focus on days to really see the impact of corona.
 
 ```{r}
 library(ggplot2)
@@ -143,7 +141,7 @@ simple_data3 %>%
   geom_line(aes(color=country))
 ```
 
-Through this line graph/chart, we can see that as the cases in china slowly went down, the cases in other countries started to go up. This relationship is pretty interesting because from a holistic standpoint, corona cases for all the countries should spike. In this graph, we can also see that China was hit the hardest in late January and early Febuary with a huge spike near Feb 1.
+Through this line graph/chart, we can see that as the cases in china slowly went down, the cases in other countries started to go up. This relationship is pretty interesting because from a holistic standpoint, corona cases for all the countries should spike. In this graph, we can also see that China was hit the hardest in late January and early February with a huge spike near Feb 1.
 
 Part 3: The most vulnerable age group of corona virus.
 
@@ -167,7 +165,7 @@ simple_data5 <- na.omit(simple_data4)
 head(simple_data5)
 ```
 
-To visualize this, we will use the same vizualization method we used for the top 10 countries with the highest number of COVID-19 cases between January and February.
+To visualize this, we will use the same visualization method we used for the top 10 countries with the highest number of COVID-19 cases between January and February.
 
 ```{r}
 library(ggplot2)
@@ -181,7 +179,7 @@ simple_data5 %>%
     geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90))
 ```
 
-From this data set, we can see that the most vulnearable age group is 50-59 and  and people whho are in their early teens. It seems like these two groups experience the most cases of coronavirus.
+From this data set, we can see that the most vulnerable age group is 50-59 and  and people who are in their early teens. It seems like these two groups experience the most cases of coronavirus.
 
 Part 4. Gender of people affected by coronavirus in China
 
@@ -246,9 +244,9 @@ regression_model <- lm(new_cases~date, data=global_case_data)
 broom::tidy(regression_model)
 ```
 
-Given the above results, the p-value is 0.007 so the relationship between date and the global COVID-19 cases is statistically signifcant.
+Given the above results, the p-value is 0.007 so the relationship between date and the global COVID-19 cases is statistically significant.
 
-This method of predicting global coronavirus cases is useful, but what if we want to make more specific predictions? For instance, can we predict the number of COVID-19 cases at a spcific time and location? Our linear regression model can be extended for to make predictions using more than one attribute.
+This method of predicting global coronavirus cases is useful, but what if we want to make more specific predictions? For instance, can we predict the number of COVID-19 cases at a specific time and location? Our linear regression model can be extended for to make predictions using more than one attribute.
 
 ```{r}
 location_case_data <- simple_data %>%
@@ -260,9 +258,9 @@ ry <- lm(new_cases~date+country, data=location_case_data)
 broom::tidy(ry)
 ```
 
-This regression model takes into account the current date and the reported location of coronavirus cases. In many cases, the p-values for the case-location relationships are > 0.05 which means they are not statistically signifcant relations. The only location attribute that is within the p-value threshold is China. This indicates that we can only make statistically significant predictions about the number of expected coronavirus cases for the location: China. The likely reason that none of the other locations have statistically signicant relationships is a lack of collected data in this dataset. If other more case data was collected for other countries, it would be much easier to form accurate predictions for those locations.
+This regression model takes into account the current date and the reported location of coronavirus cases. In many cases, the p-values for the case-location relationships are > 0.05 which means they are not statistically significant relations. The only location attribute that is within the p-value threshold is China. This indicates that we can only make statistically significant predictions about the number of expected coronavirus cases for the location: China. The likely reason that none of the other locations have statistically significant relationships is a lack of collected data in this dataset. If other more case data was collected for other countries, it would be much easier to form accurate predictions for those locations.
 
-Another attribute that may be of interest to measure with linear regression is age. This would allow us to predict the number of cases over time amoung different age groups.
+Another attribute that may be of interest to measure with linear regression is age. This would allow us to predict the number of cases over time among different age groups.
 
 ```{r}
 age_case_data <- simple_data %>%
@@ -287,15 +285,21 @@ ry <- lm(new_cases~date+country+age, data=age_loc_case_data)
 broom::tidy(ry)
 ```
 
-Unfortunately, this causes the p-values for all attributes to be greater than the 0.05 threshold. So this regression model is not statistically signifcant.
+Unfortunately, this causes the p-values for all attributes to be greater than the 0.05 threshold. So this regression model is not statistically significant.
 
 For these linear regression models, we can get pretty good results when predicting global COVID-19 cases. However, in order to get better predictions using more attributes, we would need to collect more data.
 
-##Conclusion 
+## Conclusion 
 In summary, through our tutorial, you have learned how to:
-   -Load a dataset into RStudio
-   -Add the needed packages/libraries to work with the datasets
-   -Clean the dataset to show only what we want to see
-   -Tidy the datasets by formatting our columns and converting their types into what we want
-   -Analyized data and used different visualization techniques to learn about the coronavirus
-   -Used linear regression to make predicitons about COVID-19 cases in the future
+
+-Load a dataset into RStudio
+
+-Add the needed packages/libraries to work with the datasets
+
+-Clean the dataset to show only what we want to see
+
+-Tidy the datasets by formatting our columns and converting their types into what we want
+
+-Analyized data and used different visualization techniques to learn about the coronavirus
+
+-Used linear regression to make predictions about COVID-19 cases in the future
